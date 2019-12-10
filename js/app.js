@@ -1,3 +1,12 @@
+//fetch api data over http or https
+if (location.protocol === "http:") {
+  url =
+    "http://api.openweathermap.org/data/2.5/weather?lat=21.1682895&lon=-101.6723306&units=imperial&APPID=ec50a6072ac189dee111acdd3a38ab9f";
+} else {
+  url =
+    "https://api.openweathermap.org/data/2.5/weather?lat=21.1682895&lon=-101.6723306&units=imperial&APPID=ec50a6072ac189dee111acdd3a38ab9f";
+}
+
 const notificationElement = document.querySelector(".notification");
 const iconElement = document.querySelector(".weather-icon");
 const tempElement = document.querySelector(".temperature-value p");
@@ -43,18 +52,18 @@ function getWeather(latitude, longitude) {
   let api = `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`;
 
   fetch(api)
-    .then(function(response) {
+    .then(function (response) {
       let data = response.json();
       return data;
     })
-    .then(function(data) {
+    .then(function (data) {
       weather.temperature.value = Math.floor(data.main.temp - kelvin);
       weather.description = data.weather[0].description;
       weather.iconId = data.weather[0].icon;
       weather.city = data.name;
       weather.country = data.sys.country;
     })
-    .then(function() {
+    .then(function () {
       displayWeather();
     });
 }
