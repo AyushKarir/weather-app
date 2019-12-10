@@ -12,6 +12,9 @@ const iconElement = document.querySelector(".weather-icon");
 const tempElement = document.querySelector(".temperature-value p");
 const descElement = document.querySelector(".temperature-description p");
 const locationElement = document.querySelector(".location p");
+const windSpeed = document.querySelector(".wind-speed p");
+const Rainfall = document.querySelector(".rainfall p");
+const sunRise = document.querySelector(".sun-rise p");
 
 //App data
 const weather = {};
@@ -52,20 +55,49 @@ function getWeather(latitude, longitude) {
   let api = `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`;
 
   fetch(api)
-    .then(function (response) {
+    .then(function(response) {
       let data = response.json();
       return data;
     })
-    .then(function (data) {
+    .then(function(data) {
       weather.temperature.value = Math.floor(data.main.temp - kelvin);
       weather.description = data.weather[0].description;
       weather.iconId = data.weather[0].icon;
       weather.city = data.name;
       weather.country = data.sys.country;
+      weather.speed = data.wind.speed;
+      weather.rain = data.rain;
+      weather.sunrise = data.sys.sunrise;
+      weather.sunset = data.sys.sunset;
     })
-    .then(function () {
+    .then(function() {
       displayWeather();
     });
+}
+//conversion of utc time to local time
+function sunRisetime() {
+  unixTimestamp = `${weather.sunrise}`;
+
+  // convert to milliseconds and
+  // then create a new Date object
+  dateObj = new Date(unixTimestamp * 1000);
+  utcString = dateObj.toUTCString();
+
+  time = utcString.slice(-11, -4);
+
+  return time;
+}
+function sunsetime() {
+  unixTimestamp = `${weather.sunset}`;
+
+  // convert to milliseconds and
+  // then create a new Date object
+  dateObj = new Date(unixTimestamp * 1000);
+  utcString = dateObj.toUTCString();
+
+  time = utcString.slice(-11, -4);
+
+  return time;
 }
 
 // DISPLAY WEATHER
@@ -74,4 +106,8 @@ function displayWeather() {
   tempElement.innerHTML = `${weather.temperature.value}°<span>C</span>`;
   descElement.innerHTML = weather.description;
   locationElement.innerHTML = `${weather.city}, ${weather.country}`;
+  windSpeed.innerHTML = `Wind: ${weather.speed} meter/sec`;
+  Rainfall.innerHTML = `Rain: ${weather.rain} mm`;
+  Rainfall.innerHTML =
+    `Sunrise: ` + sunRisetime() + ` GMT <br> Sunset: ` + sunsetime() + " GMT";
 }
